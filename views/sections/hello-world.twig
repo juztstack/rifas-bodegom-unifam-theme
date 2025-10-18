@@ -1,0 +1,7 @@
+<div>
+    Hi there, i am {{ section.section_id }} section
+    <pre>{{ section.settings.title }}</pre>
+    {% for block in section.blocks %}
+        <div>{{ block.settings.title }}</div>   
+    {% endfor %}
+</div>
