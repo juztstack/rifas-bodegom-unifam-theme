@@ -1,0 +1,2 @@
+document.addEventListener("DOMContentLoaded",function(){const e=document.getElementById("mobile-menu-button"),t=document.getElementById("mobile-menu");e&&e.addEventListener("click",()=>{t.classList.toggle("active")}),document.querySelectorAll(".mobile-submenu-toggle").forEach(e=>{e.addEventListener("click",()=>{const t=e.nextElementSibling,n=e.querySelector("svg");t.classList.toggle("active"),n.classList.toggle("rotate-180")})})});
+//# sourceMappingURL=juzt.scripts.js.map

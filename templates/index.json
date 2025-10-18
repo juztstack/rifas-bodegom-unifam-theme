@@ -1,37 +1,14 @@
 {
     "template": "index",
     "sections": {
-        "helloworld": {
-            "id": "helloworld",
-            "section_id": "hello-world",
-            "settings": {
-                "title": "Pepe"
-            },
-            "blocks": [
-                {
-                    "type": "title",
-                    "settings": {
-                        "title": "Bloque 1"
-                    }
-                },
-                {
-                    "type": "title",
-                    "settings": {
-                        "title": "Bloque 2"
-                    }
-                }
-            ],
-            "title": "Pepe"
-        },
-        "section_1747531609268": {
-            "section_id": "hero",
+        "section_1760822136686": {
+            "section_id": "home-hero",
             "settings": [],
             "blocks": []
         }
     },
     "order": [
-        "helloworld",
-        "section_1747531609268"
+        "section_1760822136686"
     ],
     "name": "Hola mundo"
 }

@@ -1,16 +1,37 @@
-@import "~normalize.css/normalize.css";
+@import "tailwindcss";
 
-@import "abstracts/fonts";
-@import "abstracts/variables";
-@import "abstracts/mixins";
+/* Animación para el menú móvil */
+.mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
 
-@import "base/reset";
-@import "base/typography";
+.mobile-menu.active {
+    max-height: 500px;
+}
 
-@import "layout/container";
-@import "layout/header";
-@import "layout/footer";
-@import "layout/forms";
+/* Animación para submenús desktop */
+.submenu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
 
+.menu-item:hover .submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
 
+/* Animación para submenús móvil */
+.mobile-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
 
+.mobile-submenu.active {
+    max-height: 300px;
+}

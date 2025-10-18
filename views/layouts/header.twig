@@ -1,3 +1,136 @@
-<header>
-    {% include "layouts/nav.twig" %}
+<!-- Header -->
+<header
+	class="bg-indigo-700 shadow-lg sticky top-0 z-50">
+	<!-- Barra superior -->
+	<div class="bg-indigo-900 text-white py-2">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div class="flex justify-between items-center text-sm">
+				<div class="flex items-center gap-4">
+					<span>📞 +52 55 1234 5678</span>
+					<span>✉️ contacto@rifamax.com</span>
+				</div>
+				<div class="hidden md:flex items-center gap-4">
+					<a href="#" class="hover:text-indigo-300 transition">Iniciar Sesión</a>
+					<a href="#" class="bg-white text-indigo-900 px-4 py-1 rounded-full font-semibold hover:bg-indigo-100 transition">Registrarse</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Navegación principal -->
+	<nav class="bg-indigo-700">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div
+				class="flex justify-between items-center h-20">
+				<!-- Logo -->
+				<div class="flex-shrink-0 flex items-center">
+					<a href="#" class="text-white text-3xl font-bold tracking-tight">
+						🎟️
+						<span class="text-white">Rifa</span>
+						<span class="text-indigo-200">Max</span>
+					</a>
+				</div>
+
+				<!-- Menú Desktop -->
+				<div class="hidden lg:flex items-center space-x-1">
+					<a href="#" class="text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-600 transition">Inicio</a>
+
+					<!-- Rifas con submenú -->
+					<div class="menu-item relative">
+						<button class="text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center gap-1">
+							Rifas
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+							</svg>
+						</button>
+						<div class="submenu absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2">
+							<a href="#" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">🚗 Autos y Motos</a>
+							<a href="#" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">🏠 Casas y Terrenos</a>
+							<a href="#" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">💰 Efectivo</a>
+							<a href="#" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">📱 Electrónicos</a>
+							<a href="#" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">🎁 Otros Premios</a>
+						</div>
+					</div>
+
+					<!-- Cómo Funciona con submenú -->
+					<div class="menu-item relative">
+						<button class="text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center gap-1">
+							Cómo Funciona
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+							</svg>
+						</button>
+						<div class="submenu absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2">
+							<a href="#" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">📝 Comprar Boletos</a>
+							<a href="#" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">🎲 Sorteos</a>
+							<a href="#" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">🏆 Ganadores</a>
+							<a href="#" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">❓ Preguntas Frecuentes</a>
+						</div>
+					</div>
+
+					<a href="#" class="text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-600 transition">Ganadores</a>
+					<a href="#" class="text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-600 transition">Contacto</a>
+
+					<a href="#" class="ml-4 bg-white text-indigo-700 px-6 py-2 rounded-full font-bold hover:bg-indigo-100 transition shadow-lg">
+						Mis Boletos
+					</a>
+				</div>
+
+				<!-- Botón menú móvil -->
+				<button id="mobile-menu-button" class="lg:hidden text-white p-2 rounded-lg hover:bg-indigo-600 transition">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Menú Móvil -->
+			<div id="mobile-menu" class="mobile-menu lg:hidden pb-4">
+				<div class="space-y-2">
+					<a href="#" class="block text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Inicio</a>
+
+					<!-- Rifas móvil con submenú -->
+					<div>
+						<button class="mobile-submenu-toggle w-full text-left text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center justify-between">
+							Rifas
+							<svg class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+							</svg>
+						</button>
+						<div class="mobile-submenu bg-indigo-800 rounded-lg mt-1 ml-4">
+							<a href="#" class="block text-white px-4 py-2 hover:bg-indigo-700 transition rounded-lg">🚗 Autos y Motos</a>
+							<a href="#" class="block text-white px-4 py-2 hover:bg-indigo-700 transition rounded-lg">🏠 Casas y Terrenos</a>
+							<a href="#" class="block text-white px-4 py-2 hover:bg-indigo-700 transition rounded-lg">💰 Efectivo</a>
+							<a href="#" class="block text-white px-4 py-2 hover:bg-indigo-700 transition rounded-lg">📱 Electrónicos</a>
+							<a href="#" class="block text-white px-4 py-2 hover:bg-indigo-700 transition rounded-lg">🎁 Otros Premios</a>
+						</div>
+					</div>
+
+					<!-- Cómo Funciona móvil con submenú -->
+					<div>
+						<button class="mobile-submenu-toggle w-full text-left text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center justify-between">
+							Cómo Funciona
+							<svg class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+							</svg>
+						</button>
+						<div class="mobile-submenu bg-indigo-800 rounded-lg mt-1 ml-4">
+							<a href="#" class="block text-white px-4 py-2 hover:bg-indigo-700 transition rounded-lg">📝 Comprar Boletos</a>
+							<a href="#" class="block text-white px-4 py-2 hover:bg-indigo-700 transition rounded-lg">🎲 Sorteos</a>
+							<a href="#" class="block text-white px-4 py-2 hover:bg-indigo-700 transition rounded-lg">🏆 Ganadores</a>
+							<a href="#" class="block text-white px-4 py-2 hover:bg-indigo-700 transition rounded-lg">❓ Preguntas Frecuentes</a>
+						</div>
+					</div>
+
+					<a href="#" class="block text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Ganadores</a>
+					<a href="#" class="block text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition">Contacto</a>
+
+					<div class="px-4 pt-2 space-y-2">
+						<a href="#" class="block text-center bg-white text-indigo-700 px-6 py-3 rounded-full font-bold hover:bg-indigo-100 transition">Mis Boletos</a>
+						<a href="#" class="block text-center bg-indigo-800 text-white px-6 py-3 rounded-full font-bold hover:bg-indigo-900 transition">Iniciar Sesión</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
 </header>

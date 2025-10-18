@@ -11,9 +11,9 @@ const JS_DIR = path.resolve(__dirname, "../../src/js");
 const TS_DIR = path.resolve(__dirname, "../../src/ts");
 
 const entry = {
-  "endrock.styles": SASS_DIR + "/index.scss",
-  "endrock.scripts": JS_DIR + "/index.js",
-  "endrock.ts-scripts": TS_DIR + "/index.ts",
+  "juzt.styles": SASS_DIR + "/index.scss",
+  "juzt.scripts": JS_DIR + "/index.js",
+  "juzt.ts-scripts": TS_DIR + "/index.ts"
 };
 
 const output = {
@@ -31,13 +31,13 @@ const rules = [
   {
     include: [SASS_DIR],
     test: /\.css$/i,
-    use: ["style-loader", "css-loader"],
+    use: [miniCssExtractPlugin.loader, "style-loader", "css-loader", "postcss-loader"],
   },
   {
     include: [SASS_DIR],
     test: /\.scss$/,
     exclude: /node_modules/,
-    use: [miniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+    use: [miniCssExtractPlugin.loader, "css-loader", "sass-loader", "postcss-loader"],
   },
 ];
 
