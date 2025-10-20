@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once get_template_directory() . '/src/functions/compatibility.php';
+require_once get_template_directory() . '/admin/modules.php';
 
 use EndrockTheme\Classes\StarterSite;
 use Timber\Timber;
