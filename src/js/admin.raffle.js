@@ -61,6 +61,9 @@ window.addEventListener("alpine:init", () => {
     Alpine.data("RaffleAppDashboardView", () => RaffleApp.controllers.dashboard.data());
     Alpine.data("RaffleAppOrderView", () => RaffleApp.controllers.order.data());
 
+    Alpine.data("RaffleAppRaffleListView", () => RaffleApp.controllers.raffle.listData());
+    Alpine.data("RaffleAppRaffleFormView", () => RaffleApp.controllers.raffle.formData());
+
     console.log("✅ Alpine configurado correctamente");
 });
 

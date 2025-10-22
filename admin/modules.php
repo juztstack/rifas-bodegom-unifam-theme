@@ -110,3 +110,15 @@ function juzt_raffle_admin_assets($hook) {
         'adminUrl' => admin_url('admin.php?page=juzt-raffle')
     ));
 }
+
+/**
+ * Cargar WordPress Media Library en página admin
+ */
+add_action('admin_enqueue_scripts', 'juzt_raffle_enqueue_media');
+
+function juzt_raffle_enqueue_media($hook) {
+    if ($hook === 'toplevel_page_juzt-raffle') {
+        // ✅ Cargar Media Library de WordPress
+        wp_enqueue_media();
+    }
+}
