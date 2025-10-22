@@ -12,7 +12,9 @@ const TS_DIR = path.resolve(__dirname, "../../src/ts");
 
 const entry = {
   "juzt.styles": SASS_DIR + "/index.scss",
+  "juzt.admin-raffles.styles": SASS_DIR + "/admin.raffle.scss",
   "juzt.scripts": JS_DIR + "/index.js",
+  "juzt.admin-raffles.scripts": JS_DIR + "/admin.raffle.js",
   "juzt.ts-scripts": TS_DIR + "/index.ts"
 };
 

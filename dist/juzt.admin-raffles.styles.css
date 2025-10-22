@@ -1,6 +1,6 @@
-/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/.pnpm/css-loader@6.11.0_webpack@5.102.1/node_modules/css-loader/dist/cjs.js!./node_modules/.pnpm/sass-loader@13.3.3_sass@1.93.2_webpack@5.102.1/node_modules/sass-loader/dist/cjs.js!./node_modules/.pnpm/postcss-loader@8.2.0_postcss@8.5.6_webpack@5.102.1/node_modules/postcss-loader/dist/cjs.js!./src/scss/index.scss ***!
-  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/.pnpm/css-loader@6.11.0_webpack@5.102.1/node_modules/css-loader/dist/cjs.js!./node_modules/.pnpm/sass-loader@13.3.3_sass@1.93.2_webpack@5.102.1/node_modules/sass-loader/dist/cjs.js!./node_modules/.pnpm/postcss-loader@8.2.0_postcss@8.5.6_webpack@5.102.1/node_modules/postcss-loader/dist/cjs.js!./src/scss/admin.raffle.scss ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! tailwindcss v4.1.14 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
@@ -944,39 +944,6 @@
     }
   }
 }
-.mobile-menu {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.mobile-menu.active {
-  max-height: 500px;
-}
-
-.submenu {
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-}
-
-.menu-item:hover .submenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.mobile-submenu {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.mobile-submenu.active {
-  max-height: 300px;
-}
-
 @property --tw-translate-x {
   syntax: "*";
   inherits: false;
