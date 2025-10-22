@@ -1,5 +1,8 @@
 <?php
 
+//Require Ajax functions
+require_once get_template_directory() . '/admin/raffle/functions/ajax.php';
+
 /**Raffle modules**/
 /**
  * Registrar página admin de Juzt Raffle
@@ -77,25 +80,17 @@ function juzt_raffle_hide_wp_ui() {
 add_action('admin_enqueue_scripts', 'juzt_raffle_admin_assets');
 
 function juzt_raffle_admin_assets($hook) {
+
     // Solo cargar en nuestra página
-    if ($hook !== 'toplevel_page_juzt-raffle') {
+    if ($hook != 'toplevel_page_juzt-raffle') {
         return;
     }
-    
-    // Alpine.js desde CDN
-    wp_enqueue_script(
-        'alpinejs',
-        'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js',
-        array(),
-        '3.13.3',
-        true
-    );
     
     // Nuestro JavaScript
     wp_enqueue_script(
         'juzt-raffle-admin-js',
-        get_template_directory_uri() . '/admin/raffle/assets/admin.js',
-        array('alpinejs'),
+        get_template_directory_uri() . '/dist/juzt.admin-raffles.scripts.js',
+        array(),
         '1.0.0',
         true
     );
@@ -103,7 +98,7 @@ function juzt_raffle_admin_assets($hook) {
     // Tailwind CSS (si lo tienes compilado)
     wp_enqueue_style(
         'juzt-raffle-admin-css',
-        get_template_directory_uri() . '/admin/raffle/assets/admin.css',
+        get_template_directory_uri() . '/dist/juzt.admin-raffles.styles.css',
         array(),
         '1.0.0'
     );

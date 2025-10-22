@@ -33,6 +33,7 @@
   "license": "MIT",
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",
+    "alpinejs": "^3.15.0",
     "normalize.css": "^8.0.1"
   }
 }
