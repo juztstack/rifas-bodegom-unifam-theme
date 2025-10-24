@@ -182,46 +182,41 @@ function juzt_get_raffles_handler() {
         return;
     }
     
-    // TODO: Consultar CPT real
-    // Por ahora, datos dummy
-    $raffles = [
-        [
-            'id' => 1,
-            'title' => 'Rifa iPhone 15 Pro Max',
-            'content' => 'Increíble oportunidad de ganar el último iPhone',
-            'featured_image' => 'https://via.placeholder.com/150',
-            'price' => 100,
-            'allow_installments' => true,
-            'ticket_limit' => 1000,
-            'tickets_sold' => 450,
-            'status' => 'active',
-            'created_at' => '2025-01-10 10:00:00'
-        ],
-        [
-            'id' => 2,
-            'title' => 'Rifa Casa en la Playa',
-            'content' => 'Casa de ensueño en playa paradisíaca',
-            'featured_image' => 'https://via.placeholder.com/150',
-            'price' => 10000,
-            'allow_installments' => true,
-            'ticket_limit' => 100000,
-            'tickets_sold' => 35000,
-            'status' => 'active',
-            'created_at' => '2025-01-05 14:30:00'
-        ],
-        [
-            'id' => 3,
-            'title' => 'Rifa MacBook Pro M3',
-            'content' => 'La laptop más potente del mercado',
-            'featured_image' => 'https://via.placeholder.com/150',
-            'price' => 200,
-            'allow_installments' => false,
-            'ticket_limit' => 500,
-            'tickets_sold' => 500,
-            'status' => 'completed',
-            'created_at' => '2024-12-20 09:00:00'
-        ]
+    // Consultar rifas reales
+    $args = [
+        'post_type' => 'raffle',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'orderby' => 'date',
+        'order' => 'DESC',
     ];
+    
+    $query = new WP_Query($args);
+    $raffles = [];
+    
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+            $post_id = get_the_ID();
+            
+            // Obtener featured image
+            $featured_image = get_the_post_thumbnail_url($post_id, 'thumbnail');
+            
+            $raffles[] = [
+                'id' => $post_id,
+                'title' => get_the_title(),
+                'content' => get_the_content(),
+                'featured_image' => $featured_image ?: '',
+                'price' => floatval(get_post_meta($post_id, '_raffle_price', true)),
+                'allow_installments' => (bool) get_post_meta($post_id, '_raffle_allow_installments', true),
+                'ticket_limit' => intval(get_post_meta($post_id, '_raffle_ticket_limit', true)),
+                'tickets_sold' => intval(get_post_meta($post_id, '_raffle_tickets_sold', true)),
+                'status' => get_post_meta($post_id, '_raffle_status', true) ?: 'active',
+                'created_at' => get_the_date('Y-m-d H:i:s'),
+            ];
+        }
+        wp_reset_postdata();
+    }
     
     wp_send_json_success($raffles);
 }
@@ -246,41 +241,51 @@ function juzt_get_raffle_handler() {
         return;
     }
     
-    // TODO: Consultar CPT real con get_post() y get_post_meta()
-    // Por ahora, datos dummy
+    $post = get_post($raffle_id);
+    
+    if (!$post || $post->post_type !== 'raffle') {
+        wp_send_json_error(['message' => 'Rifa no encontrada']);
+        return;
+    }
+    
+    // Obtener galería
+    $gallery_data = get_post_meta($raffle_id, '_raffle_gallery', true);
+    $gallery = [];
+    
+    if (!empty($gallery_data) && is_array($gallery_data)) {
+        foreach ($gallery_data as $item) {
+            if (is_numeric($item)) {
+                // Es un attachment ID
+                $url = wp_get_attachment_url($item);
+                if ($url) {
+                    $gallery[] = $url;
+                }
+            } else {
+                // Es una URL directa
+                $gallery[] = $item;
+            }
+        }
+    }
+    
+    // Obtener premios
+    $prizes = get_post_meta($raffle_id, '_raffle_prizes', true);
+    if (empty($prizes) || !is_array($prizes)) {
+        // Al menos un premio vacío por defecto
+        $prizes = [
+            ['title' => '', 'description' => '', 'image' => '', 'detail' => '']
+        ];
+    }
+    
     $raffle = [
         'id' => $raffle_id,
-        'title' => 'Rifa iPhone 15 Pro Max',
-        'content' => 'Increíble oportunidad de ganar el último iPhone con todas sus características premium.',
-        'price' => 100,
-        'allow_installments' => true,
-        'ticket_limit' => 1000,
-        'status' => 'active',
-        'gallery' => [
-            'https://via.placeholder.com/400x300/FF6B6B/FFFFFF?text=Imagen+1',
-            'https://via.placeholder.com/400x300/4ECDC4/FFFFFF?text=Imagen+2',
-            'https://via.placeholder.com/400x300/45B7D1/FFFFFF?text=Imagen+3',
-        ],
-        'prizes' => [
-            [
-                'title' => 'Primer Premio',
-                'description' => 'iPhone 15 Pro Max 256GB',
-                'image' => 'https://via.placeholder.com/200/FF6B6B/FFFFFF?text=Premio+1',
-                'detail' => 'Incluye funda y protector de pantalla'
-            ],
-            [
-                'title' => 'Segundo Premio',
-                'description' => 'AirPods Pro 2da Gen',
-                'image' => 'https://via.placeholder.com/200/4ECDC4/FFFFFF?text=Premio+2',
-                'detail' => 'Con cancelación de ruido activa'
-            ],
-            [
-                'title' => 'Tercer Premio',
-                'description' => 'Apple Watch Series 9',
-                'image' => 'https://via.placeholder.com/200/45B7D1/FFFFFF?text=Premio+3',
-                'detail' => 'GPS + Cellular'
-            ]
-        ]
+        'title' => $post->post_title,
+        'content' => $post->post_content,
+        'price' => floatval(get_post_meta($raffle_id, '_raffle_price', true)),
+        'allow_installments' => (bool) get_post_meta($raffle_id, '_raffle_allow_installments', true),
+        'ticket_limit' => intval(get_post_meta($raffle_id, '_raffle_ticket_limit', true)),
+        'status' => get_post_meta($raffle_id, '_raffle_status', true) ?: 'active',
+        'gallery' => $gallery,
+        'prizes' => $prizes,
     ];
     
     wp_send_json_success($raffle);
@@ -306,38 +311,77 @@ function juzt_create_raffle_handler() {
         return;
     }
     
-    // TODO: Crear post real
-    /*
+    // Validar campos requeridos
+    if (empty($raffle_data['title']) || !isset($raffle_data['price']) || !isset($raffle_data['ticket_limit'])) {
+        wp_send_json_error(['message' => 'Faltan campos requeridos']);
+        return;
+    }
+    
+    // Crear el post
     $post_id = wp_insert_post([
         'post_title'   => sanitize_text_field($raffle_data['title']),
         'post_content' => wp_kses_post($raffle_data['content']),
         'post_status'  => 'publish',
         'post_type'    => 'raffle',
+        'post_author'  => get_current_user_id(),
     ]);
     
+    if (is_wp_error($post_id)) {
+        wp_send_json_error(['message' => 'Error al crear la rifa: ' . $post_id->get_error_message()]);
+        return;
+    }
+    
     if ($post_id) {
+        // Guardar meta fields
         update_post_meta($post_id, '_raffle_price', floatval($raffle_data['price']));
-        update_post_meta($post_id, '_raffle_allow_installments', $raffle_data['allow_installments']);
+        update_post_meta($post_id, '_raffle_allow_installments', !empty($raffle_data['allow_installments']));
         update_post_meta($post_id, '_raffle_ticket_limit', intval($raffle_data['ticket_limit']));
-        update_post_meta($post_id, '_raffle_gallery', $raffle_data['gallery']);
-        update_post_meta($post_id, '_raffle_prizes', $raffle_data['prizes']);
         update_post_meta($post_id, '_raffle_status', sanitize_text_field($raffle_data['status']));
         update_post_meta($post_id, '_raffle_tickets_sold', 0);
+        
+        // Guardar galería de imágenes
+        if (!empty($raffle_data['gallery']) && is_array($raffle_data['gallery'])) {
+            // Convertir URLs a attachment IDs si es posible
+            $gallery_ids = [];
+            foreach ($raffle_data['gallery'] as $image_url) {
+                $attachment_id = attachment_url_to_postid($image_url);
+                if ($attachment_id) {
+                    $gallery_ids[] = $attachment_id;
+                } else {
+                    // Si no se encuentra el ID, guardar la URL
+                    $gallery_ids[] = $image_url;
+                }
+            }
+            update_post_meta($post_id, '_raffle_gallery', $gallery_ids);
+            
+            // Establecer la primera imagen como featured image
+            if (!empty($gallery_ids) && is_numeric($gallery_ids[0])) {
+                set_post_thumbnail($post_id, $gallery_ids[0]);
+            }
+        }
+        
+        // Guardar premios
+        if (!empty($raffle_data['prizes']) && is_array($raffle_data['prizes'])) {
+            // Sanitizar premios
+            $prizes = [];
+            foreach ($raffle_data['prizes'] as $prize) {
+                $prizes[] = [
+                    'title' => sanitize_text_field($prize['title'] ?? ''),
+                    'description' => sanitize_textarea_field($prize['description'] ?? ''),
+                    'image' => esc_url_raw($prize['image'] ?? ''),
+                    'detail' => sanitize_text_field($prize['detail'] ?? ''),
+                ];
+            }
+            update_post_meta($post_id, '_raffle_prizes', $prizes);
+        }
         
         wp_send_json_success([
             'message' => 'Rifa creada exitosamente',
             'raffle_id' => $post_id
         ]);
     } else {
-        wp_send_json_error(['message' => 'Error al crear rifa']);
+        wp_send_json_error(['message' => 'Error al crear la rifa']);
     }
-    */
-    
-    // Simulación por ahora
-    wp_send_json_success([
-        'message' => 'Rifa creada exitosamente (simulado)',
-        'raffle_id' => rand(100, 999)
-    ]);
 }
 
 /**
@@ -361,11 +405,69 @@ function juzt_update_raffle_handler() {
         return;
     }
     
-    // TODO: Actualizar post real con wp_update_post() y update_post_meta()
+    // Verificar que el post existe y es del tipo correcto
+    $post = get_post($raffle_id);
+    if (!$post || $post->post_type !== 'raffle') {
+        wp_send_json_error(['message' => 'Rifa no encontrada']);
+        return;
+    }
     
-    // Simulación
+    // Actualizar el post
+    $updated = wp_update_post([
+        'ID'           => $raffle_id,
+        'post_title'   => sanitize_text_field($raffle_data['title']),
+        'post_content' => wp_kses_post($raffle_data['content']),
+    ]);
+    
+    if (is_wp_error($updated)) {
+        wp_send_json_error(['message' => 'Error al actualizar: ' . $updated->get_error_message()]);
+        return;
+    }
+    
+    // Actualizar meta fields
+    update_post_meta($raffle_id, '_raffle_price', floatval($raffle_data['price']));
+    update_post_meta($raffle_id, '_raffle_allow_installments', !empty($raffle_data['allow_installments']));
+    update_post_meta($raffle_id, '_raffle_ticket_limit', intval($raffle_data['ticket_limit']));
+    update_post_meta($raffle_id, '_raffle_status', sanitize_text_field($raffle_data['status']));
+    
+    // Actualizar galería
+    if (!empty($raffle_data['gallery']) && is_array($raffle_data['gallery'])) {
+        $gallery_ids = [];
+        foreach ($raffle_data['gallery'] as $image_url) {
+            $attachment_id = attachment_url_to_postid($image_url);
+            if ($attachment_id) {
+                $gallery_ids[] = $attachment_id;
+            } else {
+                $gallery_ids[] = $image_url;
+            }
+        }
+        update_post_meta($raffle_id, '_raffle_gallery', $gallery_ids);
+        
+        // Actualizar featured image
+        if (!empty($gallery_ids) && is_numeric($gallery_ids[0])) {
+            set_post_thumbnail($raffle_id, $gallery_ids[0]);
+        }
+    } else {
+        delete_post_meta($raffle_id, '_raffle_gallery');
+        delete_post_thumbnail($raffle_id);
+    }
+    
+    // Actualizar premios
+    if (!empty($raffle_data['prizes']) && is_array($raffle_data['prizes'])) {
+        $prizes = [];
+        foreach ($raffle_data['prizes'] as $prize) {
+            $prizes[] = [
+                'title' => sanitize_text_field($prize['title'] ?? ''),
+                'description' => sanitize_textarea_field($prize['description'] ?? ''),
+                'image' => esc_url_raw($prize['image'] ?? ''),
+                'detail' => sanitize_text_field($prize['detail'] ?? ''),
+            ];
+        }
+        update_post_meta($raffle_id, '_raffle_prizes', $prizes);
+    }
+    
     wp_send_json_success([
-        'message' => 'Rifa actualizada exitosamente (simulado)',
+        'message' => 'Rifa actualizada exitosamente',
         'raffle_id' => $raffle_id
     ]);
 }
@@ -390,11 +492,22 @@ function juzt_delete_raffle_handler() {
         return;
     }
     
-    // TODO: Eliminar con wp_delete_post($raffle_id, true)
+    $post = get_post($raffle_id);
     
-    // Simulación
-    wp_send_json_success([
-        'message' => 'Rifa eliminada exitosamente (simulado)',
-        'raffle_id' => $raffle_id
-    ]);
+    if (!$post || $post->post_type !== 'raffle') {
+        wp_send_json_error(['message' => 'Rifa no encontrada']);
+        return;
+    }
+    
+    // Eliminar permanentemente (usa true para forzar eliminación)
+    $deleted = wp_delete_post($raffle_id, true);
+    
+    if ($deleted) {
+        wp_send_json_success([
+            'message' => 'Rifa eliminada exitosamente',
+            'raffle_id' => $raffle_id
+        ]);
+    } else {
+        wp_send_json_error(['message' => 'Error al eliminar la rifa']);
+    }
 }
