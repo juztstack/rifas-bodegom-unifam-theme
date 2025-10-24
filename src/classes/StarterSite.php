@@ -5,6 +5,7 @@ namespace EndrockTheme\Classes;
 use EndrockTheme\Classes\Assets;
 use EndrockTheme\Classes\CustomAjax;
 use EndrockTheme\Classes\CustomFunctions;
+use EndrockTheme\Classes\JuztRaffleCtp;
 use EndrockTheme\Classes\Customize;
 use EndrockTheme\Classes\SettingsPage;
 use EndrockTheme\Classes\Shortcodes;
@@ -47,6 +48,7 @@ class StarterSite extends Site
         new Customize();
         new CustomTaxonomies();
         new CustomPostTypes();
+        new JuztRaffleCtp();
         new CustomAjax();
         new Shortcodes();
         new Widgets();

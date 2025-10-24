@@ -1,0 +1,14 @@
+{
+    "template": "single-raffle",
+    "sections": {
+        "main-sigle-raffle": {
+            "section_id": "main-single-raffle",
+            "settings": [],
+            "blocks": []
+        }
+    },
+    "order": [
+        "main-single-raffle"
+    ],
+    "name": "Rifa"
+}
