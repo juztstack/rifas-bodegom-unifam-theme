@@ -1,1 +1,13 @@
-<h1>{{ post.title }}</h1>
+{% set raffle_prizes = getPostMeta("_raffle_prizes", post.id) %}
+<div data-id="{{ "raffle-" ~ post.id }}">
+    <h1>{{ post.title }}</h1>
+    <pre>
+        {{ dump(raffle_prizes) }}
+    </pre>
+
+    
+
+    {% for prize in raffle_prizes %}
+        <p>{{ prize.title }}</p>
+    {% endfor %}
+</div>

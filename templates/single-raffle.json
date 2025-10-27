@@ -1,7 +1,7 @@
 {
     "template": "single-raffle",
     "sections": {
-        "main-sigle-raffle": {
+        "main-single-raffle": {
             "section_id": "main-single-raffle",
             "settings": [],
             "blocks": []

@@ -1,3 +1,5 @@
+import "./modules/raffle-frontend/index.js";
+
 document.addEventListener("DOMContentLoaded", function () {
     // Toggle menú móvil
     const mobileMenuButton = document.getElementById('mobile-menu-button');

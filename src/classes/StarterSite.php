@@ -187,6 +187,15 @@ class StarterSite extends Site
             'setPost',
             array(new CustomFunctions, 'setPost')
         ));
+        $twig->addFunction(new \Twig\TwigFunction(
+            'json_decode',
+            array(new CustomFunctions, 'json_decode')
+        ));
+
+        $twig->addFunction(new \Twig\TwigFunction(
+            'getPostMeta',
+            array(new CustomFunctions, 'getPostMeta')
+        ));
 
         $twig->addExtension(new \Twig\Extension\StringLoaderExtension());
 

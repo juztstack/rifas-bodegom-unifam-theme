@@ -279,6 +279,7 @@ function juzt_get_raffle_handler() {
     $raffle = [
         'id' => $raffle_id,
         'title' => $post->post_title,
+        'slug' => get_post_field('post_name', $raffle_id),
         'content' => $post->post_content,
         'price' => floatval(get_post_meta($raffle_id, '_raffle_price', true)),
         'allow_installments' => (bool) get_post_meta($raffle_id, '_raffle_allow_installments', true),
