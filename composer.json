@@ -20,5 +20,8 @@
         "allow-plugins": {
             "composer/installers": true
         }
+    },
+    "require-dev": {
+        "php-stubs/wordpress-stubs": "dev-master"
     }
 }

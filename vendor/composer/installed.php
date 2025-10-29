@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'kuroda/endrock-theme',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '4185cbdbbb9a1948e77670173aaf7842f1e24b6e',
         'type' => 'theme',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'composer/installers' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2a9170263fcd9cc4fd0b50917293c21d6c1a5bfe',
+            'reference' => '5b390889ecbb17bfa69ed5a030fa2e6075a19ba0',
             'type' => 'composer-plugin',
             'install_path' => __DIR__ . '/./installers',
             'aliases' => array(
@@ -22,27 +22,40 @@
             'dev_requirement' => false,
         ),
         'kuroda/endrock-theme' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '4185cbdbbb9a1948e77670173aaf7842f1e24b6e',
             'type' => 'theme',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'php-stubs/wordpress-stubs' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '8335bbaf29949fad1e1362921c208a386bb21d76',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../php-stubs/wordpress-stubs',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'dev_requirement' => true,
+        ),
         'symfony/deprecation-contracts' => array(
-            'pretty_version' => '2.5.x-dev',
-            'version' => '2.5.9999999.9999999-dev',
-            'reference' => 'd36279a5a4bc7f3ca2c412839f10d7c0aa2c1a02',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '63afe740e99a13ba87ec199bb07bbdee937a5b62',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/deprecation-contracts',
-            'aliases' => array(),
+            'aliases' => array(
+                0 => '3.6.x-dev',
+            ),
             'dev_requirement' => false,
         ),
         'symfony/polyfill-ctype' => array(
             'pretty_version' => '1.x-dev',
             'version' => '1.9999999.9999999.9999999-dev',
-            'reference' => 'c9e59dec962d38cf2e0e4c61c4a1a1312f4dd7fe',
+            'reference' => 'a3cc8b044a6ea513310cbd48ef7333b384945638',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-ctype',
             'aliases' => array(),
@@ -51,7 +64,7 @@
         'symfony/polyfill-mbstring' => array(
             'pretty_version' => '1.x-dev',
             'version' => '1.9999999.9999999.9999999-dev',
-            'reference' => 'e642fbe7a7b73cdb05460555289a9057bfd6ead6',
+            'reference' => '6d857f4d76bd4b343eac26d6b539585d2bc56493',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-mbstring',
             'aliases' => array(),
@@ -60,7 +73,7 @@
         'symfony/polyfill-php80' => array(
             'pretty_version' => '1.x-dev',
             'version' => '1.9999999.9999999.9999999-dev',
-            'reference' => '7d191eb4022901cd3d91a816ec5464ca3a08a8aa',
+            'reference' => '0cc9dd0f17f61d8131e7df6b84bd344899fe2608',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-php80',
             'aliases' => array(),
@@ -78,7 +91,7 @@
         'twig/twig' => array(
             'pretty_version' => '3.x-dev',
             'version' => '3.9999999.9999999.9999999-dev',
-            'reference' => '67f29781ffafa520b0bbfbd8384674b42db04572',
+            'reference' => 'd26e8f2b746a067f3904379a6aa74ee09cfd1d2d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twig/twig',
             'aliases' => array(),
