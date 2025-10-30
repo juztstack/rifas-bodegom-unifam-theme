@@ -3,6 +3,7 @@
 //Require Ajax functions
 require_once get_template_directory() . '/admin/raffle/functions/ajax.php';
 require_once get_template_directory() . '/admin/raffle/functions/database.php';
+//require_once get_template_directory() . '/admin/raffle/class/db-handler.php';
 
 /**Raffle modules**/
 /**
