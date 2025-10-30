@@ -2,7 +2,6 @@
 /**
  * Vista: Nueva Orden (placeholder por ahora)
  */
-echo "hola";
 ?>
 
 <div class="bg-white rounded-lg shadow-sm">

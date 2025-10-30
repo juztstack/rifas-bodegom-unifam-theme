@@ -1,3 +1,7 @@
+/**
+ * Dashboard Controller
+ */
+
 class DashboardController {
     constructor(orderModel) {
         this.orderModel = orderModel;
@@ -14,13 +18,18 @@ class DashboardController {
                 search: ''
             },
             
-            // Lifecycle
-            async init() {
+            init() {
                 console.log("📊 Dashboard inicializado");
-                await this.loadOrders();
+                this.loadOrders();
+                
+                window.addEventListener('route-changed', (e) => {
+                    if (e.detail.view === 'dashboard') {
+                        console.log("🔄 Volviendo al dashboard - Recargando órdenes");
+                        this.loadOrders();
+                    }
+                });
             },
             
-            // Acciones
             async loadOrders() {
                 this.loading = true;
                 try {
@@ -34,7 +43,6 @@ class DashboardController {
             },
             
             viewOrder(orderId) {
-                // ✅ Usar window.RaffleAppAdmin
                 window.RaffleAppAdmin.router.navigate(`/order/view/${orderId}`);
             },
             
@@ -43,7 +51,7 @@ class DashboardController {
                 this.loadOrders();
             },
             
-            // Computed
+            // ✅ Computed - Filtrar órdenes
             get filteredOrders() {
                 let filtered = this.orders;
                 
@@ -55,19 +63,26 @@ class DashboardController {
                     const search = this.filters.search.toLowerCase();
                     filtered = filtered.filter(o => 
                         o.order_number.toLowerCase().includes(search) ||
-                        o.customer_name.toLowerCase().includes(search)
+                        o.customer_name.toLowerCase().includes(search) ||
+                        o.customer_email.toLowerCase().includes(search)
                     );
                 }
                 
                 return filtered;
             },
             
-            // Helpers
+            // ✅ Helper - Órdenes por estado
+            getOrdersByStatus(status) {
+                return this.orders.filter(o => o.status === status);
+            },
+            
+            // Helpers para badges
             getStatusBadge(status) {
                 const badges = {
                     'pending': 'bg-yellow-100 text-yellow-800',
-                    'approved': 'bg-blue-100 text-blue-800',
-                    'completed': 'bg-green-100 text-green-800',
+                    'payment_complete': 'bg-blue-100 text-blue-800',
+                    'approved': 'bg-green-100 text-green-800',
+                    'completed': 'bg-green-600 text-white',
                     'rejected': 'bg-red-100 text-red-800'
                 };
                 return badges[status] || 'bg-gray-100 text-gray-800';
@@ -76,6 +91,7 @@ class DashboardController {
             getStatusText(status) {
                 const texts = {
                     'pending': 'Pendiente',
+                    'payment_complete': 'Pagos Completos',
                     'approved': 'Aprobada',
                     'completed': 'Completada',
                     'rejected': 'Rechazada'
