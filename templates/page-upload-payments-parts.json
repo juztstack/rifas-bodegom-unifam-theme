@@ -1,0 +1,14 @@
+{
+    "template": "page-upload-payments-parts",
+    "sections": {
+        "payment-parts-validation": {
+            "section_id": "main-payment-parts-validation",
+            "settings": [],
+            "blocks": []
+        }
+    },
+    "order": [
+        "payment-parts-validation"
+    ],
+    "name": "Validacion de pagos por partes"
+}

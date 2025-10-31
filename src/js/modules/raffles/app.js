@@ -3,6 +3,7 @@ import Store from './store.js';
 import OrderController from './controller/order.js';
 import DashboardController from './controller/dashboard.js';
 import RaffleController from './controller/raffle.js';
+import NewOrderController from './controller/new-order.js';
 import OrderModel from './model/order.js';
 import RaffleModel from './model/raffle.js';
 
@@ -25,6 +26,7 @@ class RaffleAdminApp {
             dashboard: new DashboardController(this.models.order),
             order: new OrderController(this.models.order),
             raffle: new RaffleController(this.models.raffle),
+            newOrder: new NewOrderController(this.models.order, this.models.raffle),
         };
         
         console.log('📦 RaffleAdminApp instanciada (router pendiente)');

@@ -17,9 +17,9 @@ RaffleApp.initRouter(); // Crear el router
 RaffleApp.router.register('/dashboard', 'dashboard');
 RaffleApp.router.register('/orders', 'dashboard'); // Alias
 
+RaffleApp.router.register('/order/new', 'order-form');
 RaffleApp.router.register('/order/view/:id', 'order-detail');
 RaffleApp.router.register('/order/:id', 'order-detail'); // Alias
-RaffleApp.router.register('/order/new', 'order-form');
 RaffleApp.router.register('/new-order', 'order-form'); // Alias
 
 RaffleApp.router.register('/raffles', 'raffle-list');
@@ -63,6 +63,7 @@ window.addEventListener("alpine:init", () => {
 
     Alpine.data("RaffleAppRaffleListView", () => RaffleApp.controllers.raffle.listData());
     Alpine.data("RaffleAppRaffleFormView", () => RaffleApp.controllers.raffle.formData());
+    Alpine.data("RaffleAppNewOrderView", () => RaffleApp.controllers.newOrder.data());
 
     console.log("✅ Alpine configurado correctamente");
 });

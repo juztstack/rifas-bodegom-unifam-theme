@@ -270,6 +270,164 @@ class OrderModel {
             };
         }
     }
+
+    /**
+     * Actualizar orden
+     */
+    async update(orderId, orderData) {
+        const formData = new FormData();
+        formData.append('action', 'juzt_update_order');
+        formData.append('nonce', this.nonce);
+        formData.append('order_id', orderId);
+        formData.append('customer_name', orderData.customer_name);
+        formData.append('customer_email', orderData.customer_email);
+        formData.append('customer_phone', orderData.customer_phone);
+        formData.append('customer_address', orderData.customer_address || '');
+
+        try {
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            return {
+                success: data.success,
+                message: data.data?.message || data.data || 'Error desconocido'
+            };
+        } catch (error) {
+            console.error('Error al actualizar orden:', error);
+            return {
+                success: false,
+                message: 'Error de red al actualizar orden'
+            };
+        }
+    }
+
+    async changeStatus(orderId, status, notes = '') {
+        const formData = new FormData();
+        formData.append('action', 'juzt_change_order_status');
+        formData.append('nonce', this.nonce);
+        formData.append('order_id', orderId);
+        formData.append('status', status);
+        formData.append('notes', notes);
+
+        try {
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            return {
+                success: data.success,
+                message: data.data?.message || data.data || 'Error desconocido'
+            };
+        } catch (error) {
+            console.error('Error al cambiar estado:', error);
+            return {
+                success: false,
+                message: 'Error de red al cambiar estado'
+            };
+        }
+    }
+
+    /**
+     * Eliminar orden
+     */
+    async delete(orderId) {
+        const formData = new FormData();
+        formData.append('action', 'juzt_delete_order');
+        formData.append('nonce', this.nonce);
+        formData.append('order_id', orderId);
+
+        try {
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            return {
+                success: data.success,
+                message: data.data?.message || data.data || 'Error desconocido'
+            };
+        } catch (error) {
+            console.error('Error al eliminar orden:', error);
+            return {
+                success: false,
+                message: 'Error de red al eliminar orden'
+            };
+        }
+    }
+
+    /**
+ * Agregar comentario a la orden
+ */
+    async addComment(orderId, comment) {
+        const formData = new FormData();
+        formData.append('action', 'juzt_add_order_comment');
+        formData.append('nonce', this.nonce);
+        formData.append('order_id', orderId);
+        formData.append('comment', comment);
+
+        try {
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            return {
+                success: data.success,
+                message: data.data?.message || data.data || 'Error desconocido',
+                comment: data.data?.comment || null
+            };
+        } catch (error) {
+            console.error('Error al agregar comentario:', error);
+            return {
+                success: false,
+                message: 'Error de red al agregar comentario'
+            };
+        }
+    }
+
+    /**
+     * Subir comprobante manualmente desde admin
+     */
+    async uploadPaymentProofAdmin(orderId, installmentNumber, file) {
+        const formData = new FormData();
+        formData.append('action', 'juzt_upload_payment_proof_admin');
+        formData.append('nonce', this.nonce);
+        formData.append('order_id', orderId);
+        formData.append('installment_number', installmentNumber);
+        formData.append('payment_proof', file);
+
+        try {
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            return {
+                success: data.success,
+                message: data.data?.message || data.data || 'Error desconocido',
+                file_url: data.data?.file_url || ''
+            };
+        } catch (error) {
+            console.error('Error al subir comprobante:', error);
+            return {
+                success: false,
+                message: 'Error de red al subir comprobante'
+            };
+        }
+    }
 }
 
 export default OrderModel;

@@ -719,3 +719,356 @@ function juzt_delete_raffle_handler()
         wp_send_json_error(['message' => 'Error al eliminar la rifa']);
     }
 }
+
+/**
+ * Actualizar orden existente
+ */
+add_action('wp_ajax_juzt_update_order', 'juzt_update_order_handler');
+
+function juzt_update_order_handler()
+{
+    check_ajax_referer('juzt_raffle_nonce', 'nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'No tienes permisos']);
+        return;
+    }
+
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+
+    if (!$order_id) {
+        wp_send_json_error(['message' => 'ID de orden inválido']);
+        return;
+    }
+
+    $db = Juzt_Raffle_Database::get_instance();
+    $order = $db->get_order($order_id);
+
+    if (!$order) {
+        wp_send_json_error(['message' => 'Orden no encontrada']);
+        return;
+    }
+
+    // Solo se pueden editar órdenes pendientes
+    if ($order['status'] !== 'pending') {
+        wp_send_json_error(['message' => 'Solo se pueden editar órdenes pendientes']);
+        return;
+    }
+
+    global $wpdb;
+    $table = Juzt_Raffle_Database::get_orders_table();
+
+    // Datos a actualizar
+    $update_data = array(
+        'updated_at' => current_time('mysql')
+    );
+
+    // Campos editables
+    if (isset($_POST['customer_name'])) {
+        $update_data['customer_name'] = sanitize_text_field($_POST['customer_name']);
+    }
+    if (isset($_POST['customer_email'])) {
+        $update_data['customer_email'] = sanitize_email($_POST['customer_email']);
+    }
+    if (isset($_POST['customer_phone'])) {
+        $update_data['customer_phone'] = sanitize_text_field($_POST['customer_phone']);
+    }
+    if (isset($_POST['customer_address'])) {
+        $update_data['customer_address'] = sanitize_textarea_field($_POST['customer_address']);
+    }
+
+    $updated = $wpdb->update(
+        $table,
+        $update_data,
+        array('id' => $order_id),
+        array('%s', '%s', '%s', '%s', '%s'),
+        array('%d')
+    );
+
+    if ($updated !== false) {
+        // Registrar en historial
+        $db->add_history(
+            $order_id,
+            'order_updated',
+            'Información del cliente actualizada',
+            null,
+            'user_' . get_current_user_id()
+        );
+
+        wp_send_json_success([
+            'message' => 'Orden actualizada exitosamente'
+        ]);
+    } else {
+        wp_send_json_error(['message' => 'Error al actualizar orden']);
+    }
+}
+
+/**
+ * Cambiar estado de orden manualmente
+ */
+add_action('wp_ajax_juzt_change_order_status', 'juzt_change_order_status_handler');
+
+function juzt_change_order_status_handler()
+{
+    check_ajax_referer('juzt_raffle_nonce', 'nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'No tienes permisos']);
+        return;
+    }
+
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    $new_status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+    $notes = isset($_POST['notes']) ? sanitize_textarea_field($_POST['notes']) : '';
+
+    if (!$order_id || !$new_status) {
+        wp_send_json_error(['message' => 'Datos inválidos']);
+        return;
+    }
+
+    // Validar estados permitidos
+    $allowed_statuses = ['pending', 'payment_complete', 'approved', 'completed', 'rejected'];
+    if (!in_array($new_status, $allowed_statuses)) {
+        wp_send_json_error(['message' => 'Estado no válido']);
+        return;
+    }
+
+    $db = Juzt_Raffle_Database::get_instance();
+    $order = $db->get_order($order_id);
+
+    if (!$order) {
+        wp_send_json_error(['message' => 'Orden no encontrada']);
+        return;
+    }
+
+    // Actualizar estado
+    $user_id = get_current_user_id();
+    $updated = $db->update_order_status($order_id, $new_status, $user_id);
+
+    if ($updated) {
+        // Registrar en historial
+        $description = "Estado cambiado manualmente a: {$new_status}";
+        if ($notes) {
+            $description .= " - Notas: {$notes}";
+        }
+
+        $db->add_history(
+            $order_id,
+            'status_changed_manually',
+            $description,
+            json_encode(['old_status' => $order['status'], 'new_status' => $new_status, 'notes' => $notes]),
+            'user_' . $user_id
+        );
+
+        wp_send_json_success([
+            'message' => 'Estado actualizado exitosamente'
+        ]);
+    } else {
+        wp_send_json_error(['message' => 'Error al actualizar estado']);
+    }
+}
+
+/**
+ * Eliminar orden
+ */
+add_action('wp_ajax_juzt_delete_order', 'juzt_delete_order_handler');
+
+function juzt_delete_order_handler()
+{
+    check_ajax_referer('juzt_raffle_nonce', 'nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'No tienes permisos']);
+        return;
+    }
+
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+
+    if (!$order_id) {
+        wp_send_json_error(['message' => 'ID de orden inválido']);
+        return;
+    }
+
+    $db = Juzt_Raffle_Database::get_instance();
+    $order = $db->get_order($order_id);
+
+    if (!$order) {
+        wp_send_json_error(['message' => 'Orden no encontrada']);
+        return;
+    }
+
+    // Solo se pueden eliminar órdenes pendientes o rechazadas
+    if (!in_array($order['status'], ['pending', 'rejected'])) {
+        wp_send_json_error(['message' => 'Solo se pueden eliminar órdenes pendientes o rechazadas']);
+        return;
+    }
+
+    global $wpdb;
+
+    // Eliminar en orden correcto (por las foreign keys)
+    $history_table = Juzt_Raffle_Database::get_history_table();
+    $payments_table = Juzt_Raffle_Database::get_payments_table();
+    $numbers_table = Juzt_Raffle_Database::get_numbers_table();
+    $orders_table = Juzt_Raffle_Database::get_orders_table();
+
+    // 1. Eliminar historial
+    $wpdb->delete($history_table, array('order_id' => $order_id), array('%d'));
+
+    // 2. Eliminar pagos
+    $wpdb->delete($payments_table, array('order_id' => $order_id), array('%d'));
+
+    // 3. Eliminar números (si los hay)
+    $wpdb->delete($numbers_table, array('order_id' => $order_id), array('%d'));
+
+    // 4. Eliminar orden
+    $deleted = $wpdb->delete($orders_table, array('id' => $order_id), array('%d'));
+
+    if ($deleted) {
+        wp_send_json_success([
+            'message' => 'Orden eliminada exitosamente'
+        ]);
+    } else {
+        wp_send_json_error(['message' => 'Error al eliminar orden']);
+    }
+}
+
+/**
+ * Agregar comentario/nota a la orden
+ */
+add_action('wp_ajax_juzt_add_order_comment', 'juzt_add_order_comment_handler');
+
+function juzt_add_order_comment_handler()
+{
+    check_ajax_referer('juzt_raffle_nonce', 'nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'No tienes permisos']);
+        return;
+    }
+
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    $comment = isset($_POST['comment']) ? sanitize_textarea_field($_POST['comment']) : '';
+
+    if (!$order_id || empty($comment)) {
+        wp_send_json_error(['message' => 'Datos inválidos']);
+        return;
+    }
+
+    $db = Juzt_Raffle_Database::get_instance();
+    $order = $db->get_order($order_id);
+
+    if (!$order) {
+        wp_send_json_error(['message' => 'Orden no encontrada']);
+        return;
+    }
+
+    // Agregar comentario al historial
+    $user = wp_get_current_user();
+    $user_name = $user->display_name ?: $user->user_login;
+
+    $result = $db->add_history(
+        $order_id,
+        'comment_added',
+        $comment,
+        null,
+        'user_' . get_current_user_id()
+    );
+
+    if ($result) {
+        wp_send_json_success([
+            'message' => 'Comentario agregado exitosamente',
+            'comment' => [
+                'id' => $result,
+                'description' => $comment,
+                'created_by' => 'user_' . get_current_user_id(),
+                'created_at' => current_time('mysql'),
+                'action_type' => 'comment_added'
+            ]
+        ]);
+    } else {
+        wp_send_json_error(['message' => 'Error al agregar comentario']);
+    }
+}
+
+/**
+ * Subir comprobante manualmente desde el admin
+ */
+add_action('wp_ajax_juzt_upload_payment_proof_admin', 'juzt_upload_payment_proof_admin_handler');
+
+function juzt_upload_payment_proof_admin_handler()
+{
+    check_ajax_referer('juzt_raffle_nonce', 'nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'No tienes permisos']);
+        return;
+    }
+
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    $installment_number = isset($_POST['installment_number']) ? intval($_POST['installment_number']) : 0;
+
+    if (!$order_id || !$installment_number) {
+        wp_send_json_error(['message' => 'Datos inválidos']);
+        return;
+    }
+
+    // Verificar que hay archivo
+    if (empty($_FILES['payment_proof'])) {
+        wp_send_json_error(['message' => 'No se recibió ningún archivo']);
+        return;
+    }
+
+    // Validar tipo de archivo
+    $allowed_types = array('image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf');
+    $file_type = $_FILES['payment_proof']['type'];
+
+    if (!in_array($file_type, $allowed_types)) {
+        wp_send_json_error(['message' => 'Tipo de archivo no permitido. Solo imágenes o PDF']);
+        return;
+    }
+
+    // Validar tamaño (máximo 5MB)
+    $max_size = 5 * 1024 * 1024;
+    if ($_FILES['payment_proof']['size'] > $max_size) {
+        wp_send_json_error(['message' => 'El archivo es demasiado grande. Máximo 5MB']);
+        return;
+    }
+
+    // Subir archivo
+    require_once(ABSPATH . 'wp-admin/includes/file.php');
+    require_once(ABSPATH . 'wp-admin/includes/media.php');
+    require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+    $attachment_id = media_handle_upload('payment_proof', 0);
+
+    if (is_wp_error($attachment_id)) {
+        wp_send_json_error(['message' => 'Error al subir archivo: ' . $attachment_id->get_error_message()]);
+        return;
+    }
+
+    // Obtener URL
+    $file_url = wp_get_attachment_url($attachment_id);
+
+    // Guardar en la base de datos
+    $db = Juzt_Raffle_Database::get_instance();
+    $result = $db->upload_payment_proof($order_id, $installment_number, $file_url);
+
+    if ($result) {
+        // Registrar en historial
+        $user = wp_get_current_user();
+        $db->add_history(
+            $order_id,
+            'payment_uploaded_admin',
+            "Comprobante de cuota #{$installment_number} subido por admin",
+            json_encode(array('installment' => $installment_number, 'proof_url' => $file_url)),
+            'user_' . get_current_user_id()
+        );
+
+        wp_send_json_success([
+            'message' => 'Comprobante subido exitosamente',
+            'file_url' => $file_url
+        ]);
+    } else {
+        wp_send_json_error(['message' => 'Error al guardar el comprobante']);
+    }
+}
